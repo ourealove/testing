@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Testinggg"
         tools:targetApi="31">
         <activity
+            android:name=".SearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".DietPlanActivity"
             android:exported="false" />
         <activity

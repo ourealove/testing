@@ -1,6 +1,7 @@
 package com.example.testinggg
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
@@ -14,8 +15,11 @@ class DietPlanActivity : AppCompatActivity() {
 
         val dateText: TextView = findViewById(R.id.date_text)
         val selectedDate = intent.getStringExtra("selectedDate")
+        dateText.text = selectedDate ?: "No date selected"      // 받아온 날짜를 TextView에 표시
 
-        // 받아온 날짜를 TextView에 표시
-        dateText.text = selectedDate ?: "No date selected"
+        val backButton: Button = findViewById(R.id.back_button)
+        backButton.setOnClickListener {
+            finish()  // 현재 액티비티 종료
+        }
     }
 }
