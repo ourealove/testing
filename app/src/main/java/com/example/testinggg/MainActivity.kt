@@ -1,16 +1,9 @@
 package com.example.testinggg
 
-import android.content.Intent
-import java.util.Calendar
 import android.os.Bundle
-import android.widget.CalendarView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,54 +11,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        navView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_home -> {
-                    // 홈 화면으로 이동
-                    true
-                }
-                R.id.navigation_search -> {
-                    // SearchActivity로 이동
-                    val intent = Intent(this, SearchActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-                R.id.navigation_calendar -> {
-                    // 달력 화면으로 이동
-                    true
-                }
-                R.id.navigation_profile -> {
-                    // 프로필 화면으로 이동
-                    true
-                }
-                else -> false
+        navView.setOnItemSelectedListener { item ->
+            val fragment: Fragment? = when (item.itemId) {
+                R.id.navigation_home -> HomeFragment()
+                R.id.navigation_search -> SearchFragment()
+                R.id.navigation_calendar -> CalendarFragment()
+                // R.id.navigation_profile -> ProfileFragment() // 이 부분을 기능 구현 후 활성화
+                else -> null
             }
+            fragment?.let {
+                loadFragment(it)
+                true // 프래그먼트 로딩이 성공적으로 시작되면 true 반환
+            } ?: false // null이면 false 반환
         }
 
-        val dayText: TextView = findViewById(R.id.day_text)
-        val calendarView: CalendarView = findViewById(R.id.calendarView)
-
-        // 오늘 날짜로 CalendarView 초기화
-        val today = Calendar.getInstance()
-        calendarView.date = today.timeInMillis
-
-        // 날짜 형식 설정
-        val dateFormat: DateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
-
-        // 초기 텍스트뷰 업데이트
-        dayText.text = dateFormat.format(Date(today.timeInMillis))
-
-        // CalendarView 날짜 변경 이벤트
-        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            val calendar = Calendar.getInstance()
-            calendar.set(year, month, dayOfMonth)
-            val selectedDate = dateFormat.format(calendar.time)
-            dayText.text = selectedDate
-
-            val intent = Intent(this, DietPlanActivity::class.java).apply {
-                putExtra("selectedDate", selectedDate)
-            }
-            startActivity(intent)
+        // 앱 시작 시 HomeFragment를 기본으로 로드
+        if (savedInstanceState == null) {
+            navView.selectedItemId = R.id.navigation_home
         }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }
